@@ -5,11 +5,6 @@ package com.yy.entity;
  * @datetime 2016年8月22日 下午2:32:12
  * @description
  */
-
-/**
- * @author Administrator
- *
- */
 public class Disease {
 	private String name;
 	private String alias;

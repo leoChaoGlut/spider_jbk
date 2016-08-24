@@ -18,6 +18,21 @@ public class DiseaseWrapper {
     public static final int DIET = 10108;
     public static final int COMPLICATIONS = 10109;
 
+    private static HashMap<Integer, String> constMap = new HashMap<>();
+
+    static {
+        constMap.put(BASE_INFO, "疾病名,别名,简介");
+        constMap.put(SYMPTOM, "典型症状");
+        constMap.put(CAUSE, "发病原因");
+        constMap.put(PREVENTION, "预防知识");
+        constMap.put(CLINICAL_EXAMINATION, "临床检查");
+        constMap.put(IDENTIFICATION, "鉴别");
+        constMap.put(TREATMENT, "治疗方法");
+        constMap.put(NURSING, "护理");
+        constMap.put(DIET, "饮食保健");
+        constMap.put(COMPLICATIONS, "并发症");
+    }
+
 
     private Disease disease;
     private HashMap<Integer, Boolean> fieldRecordMap;
@@ -68,7 +83,7 @@ public class DiseaseWrapper {
 
     public void setFieldStatus(int fieldCode) {
         fieldRecordMap.put(fieldCode, true);
-        System.out.println(disease.getName() + " - " + fieldCode + " done.");
+        System.out.println("Thread Id:" + Thread.currentThread().getId() + "," + disease.getName() + " - " + constMap.get(fieldCode) + " done.");
     }
 
 }

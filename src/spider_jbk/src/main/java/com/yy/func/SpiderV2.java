@@ -15,11 +15,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by leo on 16-8-23.
+ * @author Leo
+ * @datetime 2016年8月22日 上午11:14:40
+ * @description
  */
 public class SpiderV2 {
 
-    public static AtomicInteger doneCount = new AtomicInteger(0);
 
     private final String INTRO = "/jbzs";
     private final String SYMPTOM = "/zztz";
@@ -132,17 +133,17 @@ public class SpiderV2 {
 
             return disease;
         } catch (Exception e) {
-            System.err.println("Thread Id:" + Thread.currentThread().getId() + " -> " + e.getLocalizedMessage());
+//            System.err.println("Thread Id:" + Thread.currentThread().getId() + " -> " + e.getLocalizedMessage());
             return getDisease(abbrDiseaseName);
         }
     }
 
     private String getDiseaseInfo(String abbrDiseaseName, String infoName) throws Exception {
-        int interval = new Random().nextInt(500) + 1000;
+        int interval = new Random().nextInt(500) + 500;
 //        TimeUnit.MILLISECONDS.sleep(interval);
         Document doc = Jsoup.connect(URL_PREFIX_JBK + abbrDiseaseName + infoName).get();
         String str = doc.select("div.art-box").first().text();
-        System.out.println(abbrDiseaseName + " - " + infoName + " - " + interval);
+//        System.out.println(abbrDiseaseName + " - " + infoName + " - " + interval);
         return str;
     }
 
