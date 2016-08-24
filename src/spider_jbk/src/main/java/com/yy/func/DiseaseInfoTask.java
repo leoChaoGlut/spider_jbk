@@ -23,6 +23,7 @@ public class DiseaseInfoTask implements Runnable {
 
     private int beginPage, endPage;
     private String FILE_PATH_PREFIX = "/home/leo/diseaseDetails/";
+    private String DISEASE_FILE_PATH = "/home/leo/disease/";
 
     public DiseaseInfoTask(int beginPage, int endPage) {
         this.beginPage = beginPage;
@@ -32,7 +33,7 @@ public class DiseaseInfoTask implements Runnable {
     @Override
     public void run() {
         for (int i = beginPage; i < endPage; i++) {
-            String json = FileUtil.asString("/home/leo/disease/" + i);
+            String json = FileUtil.asString(DISEASE_FILE_PATH + i);
             List<String> abbrDiseaseNamelist = JSON.parseArray(json, String.class);
             System.out.println("Page:" + i + " started.");
             for (String abbrDiseaseame : abbrDiseaseNamelist) {
