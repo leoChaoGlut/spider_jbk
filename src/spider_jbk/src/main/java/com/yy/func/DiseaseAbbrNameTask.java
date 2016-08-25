@@ -1,43 +1,40 @@
 package com.yy.func;
 
 import com.alibaba.fastjson.JSON;
+import com.yy.util.FileUtil;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by leo on 16-8-23.
+ * @author Leo
+ * @datetime 2016年8月22日 下午4:32:12
+ * @description 爬取疾病拼音首字母
  */
 public class DiseaseAbbrNameTask implements Runnable {
 
     public static AtomicInteger doneCount = new AtomicInteger(0);
 
-    private int beginIndex, endIndex;
+    public static String DISEASE_ABBR_NAME_PATH_PREFIX = "/home/leo/diseaseTmp/";
 
-    public DiseaseAbbrNameTask(int beginIndex, int endIndex) {
-        this.beginIndex = beginIndex;
-        this.endIndex = endIndex;
+    private int beginPage, endPage;
+
+    public DiseaseAbbrNameTask(int beginPage, int endPage) {
+        this.beginPage = beginPage;
+        this.endPage = endPage;
     }
 
     @Override
     public void run() {
-        for (int i = beginIndex; i < endIndex; i++) {
+        for (int i = beginPage; i < endPage; i++) {
             try {
-                Set<String> diseaseNameSet = SpiderV2.getAbbrDiseaseNameByPage(i);
-                BufferedWriter br = new BufferedWriter(new FileWriter("/home/leo/diseaseTmp/" + i));
-                br.write(JSON.toJSONString(diseaseNameSet));
-                br.flush();
-                br.close();
-                int doneCount = DiseaseAbbrNameTask.doneCount.incrementAndGet();
-                System.out.println("Page:" + i + " done. Total:" + doneCount);
+                Set<String> diseaseNameSet = Spider.getAbbrDiseaseNameByPage(i);
+                FileUtil.write(DISEASE_ABBR_NAME_PATH_PREFIX + i, JSON.toJSONString(diseaseNameSet));
+                System.out.println("Page:" + i + " done. Total:" + DiseaseAbbrNameTask.doneCount.incrementAndGet());
 //                TimeUnit.MICROSECONDS.sleep(new Random().nextInt(100));
             } catch (Exception e) {
 //                System.err.println("Thread Id: " + Thread.currentThread().getId() + " -> " + e.getLocalizedMessage());
-                i--;
+                i--;//异常后,重新爬取
             }
         }
     }

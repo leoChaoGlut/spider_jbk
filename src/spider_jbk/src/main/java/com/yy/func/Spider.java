@@ -11,18 +11,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Leo
  * @datetime 2016年8月22日 上午11:14:40
- * @description
+ * @description 爬虫逻辑
  */
-public class SpiderV2 {
+public class Spider {
 
-
-    private final String INTRO = "/jbzs";
+    private final String BASE_INFO = "/jbzs";
     private final String SYMPTOM = "/zztz";
     private final String CAUSE = "/blby";
     private final String PREVENTION = "/yfhl";
@@ -32,6 +29,7 @@ public class SpiderV2 {
     private final String NURSING = "/hl";
     private final String DIET = "/ysbj";
     private final String COMPLICATIONS = "/bfbz";
+
     private final String URL_PREFIX_JBK = "http://jbk.39.net/";
 
     private static final String URL_PREFIX_DISEASE = "http://jbk.39.net/bw_t1_p";
@@ -39,12 +37,19 @@ public class SpiderV2 {
 
     private DiseaseWrapper diseaseWrapper;
 
-    public SpiderV2(boolean createDiseaseWrapper) {
+    public Spider(boolean createDiseaseWrapper) {
         if (createDiseaseWrapper) {
             this.diseaseWrapper = new DiseaseWrapper();
         }
     }
 
+    /**
+     * 获取指定页数下的所有疾病拼音首字母
+     *
+     * @param page
+     * @return
+     * @throws Exception
+     */
     public static Set<String> getAbbrDiseaseNameByPage(int page) throws Exception {
         HashSet<String> diseaseNameSet = new HashSet<>();
         Document doc = Jsoup.connect(URL_PREFIX_DISEASE + page + URL_SUFFIX_DISEASE).get();
@@ -62,6 +67,11 @@ public class SpiderV2 {
         }
     }
 
+    /**
+     * 获取疾病总页数
+     *
+     * @return
+     */
     public int getPageCount() {
         String url = "http://jbk.39.net/bw_t1_p1#ps";
         int pageCount = -1;
@@ -76,6 +86,12 @@ public class SpiderV2 {
         return pageCount;
     }
 
+    /**
+     * 通过疾病拼音首字母获取对应的疾病详细信息
+     *
+     * @param abbrDiseaseName 疾病拼音首字母
+     * @return
+     */
     public Disease getDisease(String abbrDiseaseName) {
         try {
             if (!diseaseWrapper.fieldHasBeenSpidered(DiseaseWrapper.BASE_INFO)) {
@@ -133,7 +149,11 @@ public class SpiderV2 {
 
             return disease;
         } catch (Exception e) {
-//            System.err.println("Thread Id:" + Thread.currentThread().getId() + " -> " + e.getLocalizedMessage());
+            //防止空指针异常
+            if ("null".equals(e.getLocalizedMessage())) {
+                System.err.println("Thread Id:" + Thread.currentThread().getId() + " -> " + e.getLocalizedMessage());
+            }
+//            e.printStackTrace();
             return getDisease(abbrDiseaseName);
         }
     }
@@ -142,13 +162,17 @@ public class SpiderV2 {
         int interval = new Random().nextInt(500) + 500;
 //        TimeUnit.MILLISECONDS.sleep(interval);
         Document doc = Jsoup.connect(URL_PREFIX_JBK + abbrDiseaseName + infoName).get();
-        String str = doc.select("div.art-box").first().text();
+        Element elem = doc.select("div.art-box").first();
+        String str = null;
+        if (elem != null) {
+            str = elem.text();
+        }
 //        System.out.println(abbrDiseaseName + " - " + infoName + " - " + interval);
         return str;
     }
 
     private void getBaseInfo(String abbrDiseaseName) throws Exception {
-        Document doc = Jsoup.connect(URL_PREFIX_JBK + abbrDiseaseName + INTRO).get();
+        Document doc = Jsoup.connect(URL_PREFIX_JBK + abbrDiseaseName + BASE_INFO).get();
         Element titleElem = doc.select("div.tit").first();
         String diseaseName = titleElem.select("a>h1").first().text();
         diseaseWrapper.getDisease().setName(diseaseName);

@@ -13,9 +13,18 @@ public class FileUtil {
     private static final int DEFAULT_FILE_LENGTH = 256;
 
     public static String asString(String fileName) {
+        File file = new File(fileName);
+        return readFileContentAsString(file);
+    }
+
+    public static String asString(File file) {
+        return readFileContentAsString(file);
+    }
+
+    private static String readFileContentAsString(File file) {
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(fileName));
+            br = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder(DEFAULT_FILE_LENGTH);
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -33,7 +42,6 @@ public class FileUtil {
                 }
             }
         }
-
         return null;
     }
 

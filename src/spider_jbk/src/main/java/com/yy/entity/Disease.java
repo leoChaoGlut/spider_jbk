@@ -1,141 +1,141 @@
 package com.yy.entity;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  * @author Leo
  * @datetime 2016年8月22日 下午2:32:12
  * @description
  */
 public class Disease {
-	private String name;
-	private String alias;
-	private String intro;
-	private String symptom;
-	private String cause;
-	private String prevention;
-	private String clinicalExamination;
-	private String identification;
-	private String treatment;
-	private String nursing;
-	private String diet;
-	private String complications;
 
-	public Disease() {
-	}
+    private String name;
+    private String alias;
+    private String intro;
+    private String symptom;
+    private String cause;
+    private String prevention;
+    private String clinicalExamination;
+    private String identification;
+    private String treatment;
+    private String nursing;
+    private String diet;
+    private String complications;
 
-	public String getName() {
-		return name;
-	}
+    public Disease() {
+    }
 
-	public Disease setName(String name) {
-		this.name = name;
-		return this;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getAlias() {
-		return alias;
-	}
+    public Disease setName(String name) {
+        this.name = name;
+        return this;
+    }
 
-	public Disease setAlias(String alias) {
-		this.alias = alias;
-		return this;
-	}
+    public String getAlias() {
+        return alias;
+    }
 
-	public String getIntro() {
-		return intro;
-	}
+    public Disease setAlias(String alias) {
+        this.alias = alias;
+        return this;
+    }
 
-	public Disease setIntro(String intro) {
-		this.intro = intro;
-		return this;
-	}
+    public String getIntro() {
+        return intro;
+    }
 
-	public String getSymptom() {
-		return symptom;
-	}
+    public Disease setIntro(String intro) {
+        this.intro = intro;
+        return this;
+    }
 
-	public Disease setSymptom(String symptom) {
-		this.symptom = symptom;
-		return this;
-	}
+    public String getSymptom() {
+        return symptom;
+    }
 
-	public String getCause() {
-		return cause;
-	}
+    public Disease setSymptom(String symptom) {
+        this.symptom = symptom;
+        return this;
+    }
 
-	public Disease setCause(String cause) {
-		this.cause = cause;
-		return this;
-	}
+    public String getCause() {
+        return cause;
+    }
 
-	public String getPrevention() {
-		return prevention;
-	}
+    public Disease setCause(String cause) {
+        this.cause = cause;
+        return this;
+    }
 
-	public Disease setPrevention(String prevention) {
-		this.prevention = prevention;
-		return this;
-	}
+    public String getPrevention() {
+        return prevention;
+    }
 
-	public String getClinicalExamination() {
-		return clinicalExamination;
-	}
+    public Disease setPrevention(String prevention) {
+        this.prevention = prevention;
+        return this;
+    }
 
-	public Disease setClinicalExamination(String clinicalExamination) {
-		this.clinicalExamination = clinicalExamination;
-		return this;
-	}
+    public String getClinicalExamination() {
+        return clinicalExamination;
+    }
 
-	public String getIdentification() {
-		return identification;
-	}
+    public Disease setClinicalExamination(String clinicalExamination) {
+        this.clinicalExamination = clinicalExamination;
+        return this;
+    }
 
-	public Disease setIdentification(String identification) {
-		this.identification = identification;
-		return this;
-	}
+    public String getIdentification() {
+        return identification;
+    }
 
-	public String getTreatment() {
-		return treatment;
-	}
+    public Disease setIdentification(String identification) {
+        this.identification = identification;
+        return this;
+    }
 
-	public Disease setTreatment(String treatment) {
-		this.treatment = treatment;
-		return this;
-	}
+    public String getTreatment() {
+        return treatment;
+    }
 
-	public String getNursing() {
-		return nursing;
-	}
+    public Disease setTreatment(String treatment) {
+        this.treatment = treatment;
+        return this;
+    }
 
-	public Disease setNursing(String nursing) {
-		this.nursing = nursing;
-		return this;
-	}
+    public String getNursing() {
+        return nursing;
+    }
 
-	public String getDiet() {
-		return diet;
-	}
+    public Disease setNursing(String nursing) {
+        this.nursing = nursing;
+        return this;
+    }
 
-	public Disease setDiet(String diet) {
-		this.diet = diet;
-		return this;
-	}
+    public String getDiet() {
+        return diet;
+    }
 
-	public String getComplications() {
-		return complications;
-	}
+    public Disease setDiet(String diet) {
+        this.diet = diet;
+        return this;
+    }
 
-	public Disease setComplications(String complications) {
-		this.complications = complications;
-		return this;
-	}
+    public String getComplications() {
+        return complications;
+    }
 
-	@Override
-	public String toString() {
-		return "Disease [name=" + name + ", alias=" + alias + ", intro=" + intro + ", symptom=" + symptom + ", cause="
-				+ cause + ", prevention=" + prevention + ", clinicalExamination=" + clinicalExamination
-				+ ", identification=" + identification + ", treatment=" + treatment + ", nursing=" + nursing + ", diet="
-				+ diet + ", complications=" + complications + "]";
-	}
+    public Disease setComplications(String complications) {
+        this.complications = complications;
+        return this;
+    }
+
+
+    public String toJSON() {
+        return JSON.toJSONString(this);
+    }
 
 }

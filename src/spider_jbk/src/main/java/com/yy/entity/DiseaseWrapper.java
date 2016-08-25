@@ -3,7 +3,9 @@ package com.yy.entity;
 import java.util.HashMap;
 
 /**
- * Created by leo on 16-8-23.
+ * @author Leo
+ * @datetime 2016年8月22日 下午3:32:12
+ * @description 疾病包装类
  */
 public class DiseaseWrapper {
 
@@ -35,6 +37,9 @@ public class DiseaseWrapper {
 
 
     private Disease disease;
+    /**
+     * 记录爬取过的疾病字段,防止重复爬取
+     */
     private HashMap<Integer, Boolean> fieldRecordMap;
 
     public DiseaseWrapper() {
@@ -52,9 +57,14 @@ public class DiseaseWrapper {
         fieldRecordMap.put(COMPLICATIONS, false);
     }
 
-    public DiseaseWrapper(Disease disease, HashMap<Integer, Boolean> fieldRecordMap) {
-        this.disease = disease;
-        this.fieldRecordMap = fieldRecordMap;
+    /**
+     * 将疾病的某一种信息爬完后,将该信息记录下来,防止不必要的重复爬取
+     *
+     * @param fieldCode
+     */
+    public void setFieldStatus(int fieldCode) {
+        fieldRecordMap.put(fieldCode, true);
+        System.out.println("Thread Id:" + Thread.currentThread().getId() + "," + disease.getName() + " - " + constMap.get(fieldCode) + " done.");
     }
 
     public static int getBaseInfo() {
@@ -81,9 +91,5 @@ public class DiseaseWrapper {
         return fieldRecordMap.get(fieldCode);
     }
 
-    public void setFieldStatus(int fieldCode) {
-        fieldRecordMap.put(fieldCode, true);
-        System.out.println("Thread Id:" + Thread.currentThread().getId() + "," + disease.getName() + " - " + constMap.get(fieldCode) + " done.");
-    }
 
 }

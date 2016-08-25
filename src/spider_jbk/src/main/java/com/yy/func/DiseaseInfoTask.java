@@ -4,16 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.yy.entity.Disease;
 import com.yy.util.FileUtil;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by leo on 16-8-23.
+ * @author Leo
+ * @datetime 2016年8月22日 下午5:32:12
+ * @description 爬取疾病详细信息
  */
 public class DiseaseInfoTask implements Runnable {
 
@@ -22,8 +21,9 @@ public class DiseaseInfoTask implements Runnable {
     public static AtomicInteger doneCount = new AtomicInteger(0);
 
     private int beginPage, endPage;
-    private String FILE_PATH_PREFIX = "/home/leo/diseaseDetails/";
-    private String DISEASE_FILE_PATH = "/home/leo/disease/";
+
+    public static String OUTPUT_FILE_PATH_PREFIX = "/home/leo/diseaseDetails/";
+    public static String DISEASE_NAME_PATH = "/home/leo/disease/";
 
     public DiseaseInfoTask(int beginPage, int endPage) {
         this.beginPage = beginPage;
@@ -33,17 +33,19 @@ public class DiseaseInfoTask implements Runnable {
     @Override
     public void run() {
         for (int i = beginPage; i < endPage; i++) {
-            String json = FileUtil.asString(DISEASE_FILE_PATH + i);
+            String json = FileUtil.asString(DISEASE_NAME_PATH + i);
             List<String> abbrDiseaseNamelist = JSON.parseArray(json, String.class);
             System.out.println("Page:" + i + " started.");
             for (String abbrDiseaseame : abbrDiseaseNamelist) {
-                File file = new File(FILE_PATH_PREFIX + i + "/" + abbrDiseaseame);
+                File file = new File(OUTPUT_FILE_PATH_PREFIX + i + "/" + abbrDiseaseame);
                 if (!file.exists()) {
-                    SpiderV2 spider = new SpiderV2(true);
+                    Spider spider = new Spider(true);
                     Disease disease = spider.getDisease(abbrDiseaseame);
-                    FileUtil.write(file, disease.toString());
-                    System.out.println("Thread Id:" + Thread.currentThread().getId() + "," + disease.getName() + " done, Total:" + DiseaseInfoTask.doneCount.incrementAndGet() + ", Spend: " + BigDecimal.valueOf(System.nanoTime() - DiseaseInfoTask.beginTime, 9) + " s");
+                    FileUtil.write(file, JSON.toJSONString(disease));
+                    System.out.println("Thread Id:" + Thread.currentThread().getId() + ", Page:" + i + ", Disease:" + disease.getName() + " done, Total:" + DiseaseInfoTask.doneCount.incrementAndGet() + ", Spend: " + BigDecimal.valueOf(System.nanoTime() - DiseaseInfoTask.beginTime, 9) + " s");
                     System.out.println(disease.toString());
+                } else {
+                    DiseaseInfoTask.doneCount.incrementAndGet();
                 }
             }
             System.out.println("Page:" + i + " finished.");

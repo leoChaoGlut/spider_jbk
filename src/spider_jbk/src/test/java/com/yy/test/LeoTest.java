@@ -2,14 +2,18 @@ package com.yy.test;
 
 import com.alibaba.fastjson.JSON;
 import com.yy.entity.Disease;
-import com.yy.func.DiseaseInfoTask;
-import com.yy.func.SpiderV2;
 import com.yy.func.DiseaseAbbrNameTask;
+import com.yy.func.DiseaseInfoTask;
+import com.yy.func.Spider;
 import com.yy.util.FileUtil;
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 import org.junit.Test;
 
+import java.io.File;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,18 +45,18 @@ public class LeoTest {
 //
 //        for (int i = 0; i < diseaseList.size(); i++) {
 //            Disease disease = diseaseList.get(i);
-//            sheet.addCell(new Label(0, i + 1, disease.getName()));
-//            sheet.addCell(new Label(1, i + 1, disease.getAlias()));
-//            sheet.addCell(new Label(2, i + 1, disease.getIntro()));
-//            sheet.addCell(new Label(3, i + 1, disease.getSymptom()));
-//            sheet.addCell(new Label(4, i + 1, disease.getCause()));
-//            sheet.addCell(new Label(5, i + 1, disease.getPrevention()));
-//            sheet.addCell(new Label(6, i + 1, disease.getClinicalExamination()));
-//            sheet.addCell(new Label(7, i + 1, disease.getIdentification()));
-//            sheet.addCell(new Label(8, i + 1, disease.getTreatment()));
-//            sheet.addCell(new Label(9, i + 1, disease.getNursing()));
-//            sheet.addCell(new Label(10, i + 1, disease.getDiet()));
-//            sheet.addCell(new Label(11, i + 1, disease.getComplications()));
+//            sheet.addCell(new Label(0, count, disease.getName()));
+//            sheet.addCell(new Label(1, count, disease.getAlias()));
+//            sheet.addCell(new Label(2, count, disease.getIntro()));
+//            sheet.addCell(new Label(3, count, disease.getSymptom()));
+//            sheet.addCell(new Label(4, count, disease.getCause()));
+//            sheet.addCell(new Label(5, count, disease.getPrevention()));
+//            sheet.addCell(new Label(6, count, disease.getClinicalExamination()));
+//            sheet.addCell(new Label(7, count, disease.getIdentification()));
+//            sheet.addCell(new Label(8, count, disease.getTreatment()));
+//            sheet.addCell(new Label(9, count, disease.getNursing()));
+//            sheet.addCell(new Label(10, count, disease.getDiet()));
+//            sheet.addCell(new Label(11, count, disease.getComplications()));
 //        }
 //        workbook.write();
 //        workbook.close();
@@ -66,7 +70,7 @@ public class LeoTest {
     public void test05() {
         System.out.println("开始获取总页数");
         long begin = System.nanoTime();
-        SpiderV2 spider = new SpiderV2(false);
+        Spider spider = new Spider(false);
         int pageCount = spider.getPageCount();
         System.out.println("获取总页数完毕,共: " + pageCount + " 页,耗时:" + BigDecimal.valueOf(System.nanoTime() - begin, 9) + " s.");
 
@@ -99,7 +103,7 @@ public class LeoTest {
      */
     @Test
     public void test06() {
-        SpiderV2 spider = new SpiderV2(true);
+        Spider spider = new Spider(true);
         Disease disease = spider.getDisease("sz");
         System.out.println(disease);
 //        Disease disease = SpiderV2.getDisease("sz");
@@ -117,7 +121,7 @@ public class LeoTest {
         int threadCount = Runtime.getRuntime().availableProcessors() << 1;
         System.out.println("线程总数:" + threadCount);
         ExecutorService threadPool = Executors.newFixedThreadPool(threadCount);
-        int pageCount = 100;
+        int pageCount = 809;
         int beginPage, endPage;
         for (int i = 0; i < threadCount; i++) {
             beginPage = pageCount / threadCount * i;
@@ -131,6 +135,62 @@ public class LeoTest {
                 System.exit(0);
             }
         }
+    }
 
+    /**
+     * json文件导出excel
+     */
+    @Test
+    public void test08() throws Exception {
+        int pageCount = 809;
+        WritableWorkbook workbook = Workbook.createWorkbook(new File("/home/leo/diseaseExcel/disease.xls"));
+        WritableSheet sheet = workbook.createSheet("First Sheet", 0);
+
+        sheet.addCell(new Label(0, 0, "疾病、症状名"));
+        sheet.addCell(new Label(1, 0, "别名"));
+        sheet.addCell(new Label(2, 0, "简介"));
+        sheet.addCell(new Label(3, 0, "典型症状"));
+        sheet.addCell(new Label(4, 0, "发病原因"));
+        sheet.addCell(new Label(5, 0, "预防知识"));
+        sheet.addCell(new Label(6, 0, "临床检查"));
+        sheet.addCell(new Label(7, 0, "鉴别"));
+        sheet.addCell(new Label(8, 0, "治疗方法"));
+        sheet.addCell(new Label(9, 0, "护理"));
+        sheet.addCell(new Label(10, 0, "饮食保健"));
+        sheet.addCell(new Label(11, 0, "并发症"));
+
+        int count = 1;
+
+        for (int i = 0; i < pageCount; i++) {
+            File folder = new File("/home/leo/diseaseDetails/" + i);
+            if (folder.exists()) {
+                File[] files = folder.listFiles();
+                System.out.println("==== Page:" + i + "====");
+                for (int j = 0; j < files.length; j++) {
+                    System.out.println(FileUtil.asString(files[j]));
+                    Disease disease = JSON.parseObject(FileUtil.asString(files[j]), Disease.class);
+
+                    sheet.addCell(new Label(0, count, disease.getName()));
+                    sheet.addCell(new Label(1, count, disease.getAlias()));
+                    sheet.addCell(new Label(2, count, disease.getIntro()));
+                    sheet.addCell(new Label(3, count, disease.getSymptom()));
+                    sheet.addCell(new Label(4, count, disease.getCause()));
+                    sheet.addCell(new Label(5, count, disease.getPrevention()));
+                    sheet.addCell(new Label(6, count, disease.getClinicalExamination()));
+                    sheet.addCell(new Label(7, count, disease.getIdentification()));
+                    sheet.addCell(new Label(8, count, disease.getTreatment()));
+                    sheet.addCell(new Label(9, count, disease.getNursing()));
+                    sheet.addCell(new Label(10, count, disease.getDiet()));
+                    sheet.addCell(new Label(11, count, disease.getComplications()));
+
+                    count++;
+
+                }
+                System.out.println("==== Page:" + i + "====");
+            }
+        }
+
+        workbook.write();
+        workbook.close();
     }
 }
