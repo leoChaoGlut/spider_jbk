@@ -3,6 +3,9 @@ package com.yy.func;
 import com.alibaba.fastjson.JSON;
 import com.yy.util.FileUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,7 +18,28 @@ public class DiseaseAbbrNameTask implements Runnable {
 
     public static AtomicInteger doneCount = new AtomicInteger(0);
 
-    public static String DISEASE_ABBR_NAME_PATH_PREFIX = "/home/leo/diseaseTmp/";
+    public static String DISEASE_ABBR_NAME_PATH_PREFIX;
+
+    static {
+        InputStream is = null;
+        Properties prop = new Properties();
+        try {
+            is = DiseaseInfoTask.class.getResourceAsStream("/setting.properties");
+            prop.load(is);
+            DISEASE_ABBR_NAME_PATH_PREFIX = prop.getProperty("disease_abbr_name_path_prefix");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     private int beginPage, endPage;
 
@@ -23,6 +47,7 @@ public class DiseaseAbbrNameTask implements Runnable {
         this.beginPage = beginPage;
         this.endPage = endPage;
     }
+
 
     @Override
     public void run() {

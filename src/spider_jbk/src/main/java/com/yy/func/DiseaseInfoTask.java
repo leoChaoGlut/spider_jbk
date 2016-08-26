@@ -5,8 +5,11 @@ import com.yy.entity.Disease;
 import com.yy.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,13 +20,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DiseaseInfoTask implements Runnable {
 
     public static long beginTime;
-
     public static AtomicInteger doneCount = new AtomicInteger(0);
 
-    private int beginPage, endPage;
+    public static String DISEASE_DETAILS_PATH_PREFIX;
+    public static String DISEASE_ABBR_NAME_PATH_PREFIX;
 
-    public static String OUTPUT_FILE_PATH_PREFIX = "/home/leo/diseaseDetails/";
-    public static String DISEASE_NAME_PATH = "/home/leo/disease/";
+    static {
+        InputStream is = null;
+        Properties prop = new Properties();
+        try {
+            is = DiseaseInfoTask.class.getResourceAsStream("setting.properties");
+            prop.load(is);
+            DISEASE_DETAILS_PATH_PREFIX = prop.getProperty("disease_details_path_prefix");
+            DISEASE_ABBR_NAME_PATH_PREFIX = prop.getProperty("disease_abbr_name_path_prefix");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private int beginPage, endPage;
 
     public DiseaseInfoTask(int beginPage, int endPage) {
         this.beginPage = beginPage;
@@ -33,11 +56,11 @@ public class DiseaseInfoTask implements Runnable {
     @Override
     public void run() {
         for (int i = beginPage; i < endPage; i++) {
-            String json = FileUtil.asString(DISEASE_NAME_PATH + i);
+            String json = FileUtil.asString(DISEASE_ABBR_NAME_PATH_PREFIX + i);
             List<String> abbrDiseaseNamelist = JSON.parseArray(json, String.class);
             System.out.println("Page:" + i + " started.");
             for (String abbrDiseaseame : abbrDiseaseNamelist) {
-                File file = new File(OUTPUT_FILE_PATH_PREFIX + i + "/" + abbrDiseaseame);
+                File file = new File(DISEASE_DETAILS_PATH_PREFIX + i + "/" + abbrDiseaseame);
                 if (!file.exists()) {
                     Spider spider = new Spider(true);
                     Disease disease = spider.getDisease(abbrDiseaseame);

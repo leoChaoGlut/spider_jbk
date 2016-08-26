@@ -167,7 +167,7 @@ public class LeoTest {
                 File[] files = folder.listFiles();
                 System.out.println("==== Page:" + i + "====");
                 for (int j = 0; j < files.length; j++) {
-                    System.out.println(FileUtil.asString(files[j]));
+//                    System.out.println(FileUtil.asString(files[j]));
                     Disease disease = JSON.parseObject(FileUtil.asString(files[j]), Disease.class);
 
                     sheet.addCell(new Label(0, count, disease.getName()));
